@@ -26,7 +26,7 @@ NextJS, Typescript, Postgres, Tailwind, Vercel
 3. Kjør `npm run dev`
 4. Kjøh
 
-### Veien videre
+### Plan for utvikling
 
 1. Lage form for innsending av oppgaver
 2. Lage side for enkeltoppgaver, der ny oppgave lages
