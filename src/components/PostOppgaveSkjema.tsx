@@ -1,19 +1,32 @@
 "use client";
 import { oppgavetyper } from "@/data/oppgavetyper";
-import { Emne } from "@/data/types";
+import { Emne, OppgaveType, Variabel } from "@/data/types";
+import { variabeltyper } from "@/data/variabeltyper";
 import { useEffect, useState } from "react";
 
 export default function PostOppgaveSkjema() {
   const [state, setState] = useState(-1);
-  const [oppgavetype, setOppgavetype] = useState({ navn: "", steg: [] }); // Initialize with an empty type
+  const [oppgavetype, setOppgavetype] = useState<OppgaveType>({
+    navn: "",
+    steg: [],
+  });
   const [tittel, setTittel] = useState("");
-  const [muligeEmner, setMuligeEmner] = useState<Emne[]>([]); // Fetch from database
-  const [valgtEmne, setValgtEmne] = useState<Emne | null>(null); // Allow null initial state
+  const [muligeEmner, setMuligeEmner] = useState<Emne[]>([]);
+  const [valgtEmne, setValgtEmne] = useState<Emne | null>(null);
   const [muligeTemaer, setMuligeTemaer] = useState<
     { id: number; navn: string }[]
   >([]);
   const [valgteTemaer, setValgteTemaer] = useState<number[]>([]);
   const [oppgavetekst, setOppgavetekst] = useState("");
+
+  const [oppgavetekstMarkeringStart, setOppgavetekstMarkeringStart] =
+    useState<number>(0);
+  const [oppgavetekstMarkeringSlutt, setOppgavetekstMarkeringSlutt] =
+    useState<number>(0);
+  const [oppgavetekstMarkering, setOppgavetekstMarkering] = useState("");
+  const [aktivtVariabelTegn, setAktivtVariabelTegn] = useState("");
+  const [variabler, setVariabler] = useState<Variabel[]>([]);
+
   const [løsningsforslag, setLøsningsforslag] = useState("");
 
   const submitForm = (e: React.FormEvent) => {
@@ -58,7 +71,6 @@ export default function PostOppgaveSkjema() {
         løsningsforslag: løsningsforslag,
       };
     }
-    // Add other oppgavetype cases if needed
     return {};
   };
 
@@ -68,7 +80,7 @@ export default function PostOppgaveSkjema() {
   };
 
   const handleEmneSelection = (e: React.MouseEvent, selectedEmne: Emne) => {
-    e.preventDefault(); // Prevent the default button behavior
+    e.preventDefault();
     setValgtEmne(selectedEmne);
     updateState(true);
   };
@@ -81,49 +93,147 @@ export default function PostOppgaveSkjema() {
     );
   };
 
+  const handleSelection = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target as HTMLTextAreaElement;
+    const startPos = textarea.selectionStart;
+    const endPos = textarea.selectionEnd;
+    const selected = textarea.value.substring(startPos, endPos);
+    setOppgavetekstMarkeringStart(startPos);
+    setOppgavetekstMarkeringSlutt(endPos);
+    setOppgavetekstMarkering(selected);
+  };
+
+  const handleAddVariable = () => {
+    if (
+      aktivtVariabelTegn === "" ||
+      oppgavetekstMarkering === "" ||
+      oppgavetekstMarkering.includes("{") ||
+      oppgavetekstMarkering.includes("}")
+    ) {
+      return;
+    }
+    const variabel: Variabel = {
+      tegn: aktivtVariabelTegn,
+    };
+    console.log(variabel);
+    if (!variabler.some((variabel) => variabel.tegn === aktivtVariabelTegn)) {
+      setVariabler((prevVariabler) => [...prevVariabler, variabel]);
+    }
+    behandleOppgavetekst();
+  };
+
+  const behandleOppgavetekst = () => {
+    const nyTekst =
+      oppgavetekst.slice(0, oppgavetekstMarkeringStart) +
+      `{${aktivtVariabelTegn}}` +
+      oppgavetekst.slice(oppgavetekstMarkeringSlutt);
+    console.log(nyTekst);
+    setOppgavetekst(nyTekst);
+  };
+
+  const handleEndreVariabeltype = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    tegn: string
+  ) => {
+    const nyType = event.target.value;
+
+    const variabelIndex = variabler.findIndex((v) => v.tegn === tegn);
+
+    if (variabelIndex !== -1) {
+      const oppdatertVariabel = { ...variabler[variabelIndex], type: nyType };
+
+      const oppdaterteVariabler = [...variabler];
+      oppdaterteVariabler[variabelIndex] = oppdatertVariabel;
+      console.log(oppdaterteVariabler);
+      setVariabler(oppdaterteVariabler);
+    }
+  };
+
+  const renderInputFeltForEgenskaper = (egenskaper: string[], tegn: string) => {
+    return egenskaper.map((egenskap) => (
+      <input
+        key={egenskap}
+        type="text"
+        placeholder={egenskap}
+        onChange={(e) => handleChangingVariable(tegn, egenskap, e.target.value)}
+      />
+    ));
+  };
+
+  const handleChangingVariable = (
+    tegn: string,
+    egenskap: string,
+    inputverdi: string
+  ) => {
+    const variabelIndex = variabler.findIndex((v) => v.tegn === tegn);
+    if (variabelIndex !== -1) {
+      const oppdatertVariabel = {
+        ...variabler[variabelIndex],
+        [egenskap]: inputverdi,
+      };
+
+      const oppdaterteVariabler = [...variabler];
+      oppdaterteVariabler[variabelIndex] = oppdatertVariabel;
+      setVariabler(oppdaterteVariabler);
+    }
+  };
+
   function updateState(forward: boolean) {
     setState((prevState) => (forward ? prevState + 1 : prevState - 1));
   }
 
   return (
-    <div id="mainFrame">
-      <form onSubmit={submitForm}>
-        {state === -1 &&
-          oppgavetyper.map((type) => (
-            <button key={type.navn} onClick={() => handleTypeSelection(type)}>
-              {type.navn}
-            </button>
-          ))}
-
+    <div id="mainFrame" className="p-4 bg-gray-100">
+      <form onSubmit={submitForm} className="space-y-4">
+        <ul className="space-y-2">
+          {state === -1 &&
+            oppgavetyper.map((type) => (
+              <li key={type.navn}>
+                <button
+                  key={type.navn}
+                  onClick={() => handleTypeSelection(type)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  {type.navn}
+                </button>
+              </li>
+            ))}
+        </ul>
         {oppgavetype.steg[state] === "Tittel" && (
           <input
             type="text"
             placeholder="Tittel"
             value={tittel}
             onChange={(e) => setTittel(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
           />
         )}
 
         {oppgavetype.steg[state] === "Velg emne" &&
           muligeEmner.length > 0 &&
           muligeEmner.map((emne) => (
-            <button key={emne.id} onClick={(e) => handleEmneSelection(e, emne)}>
+            <button
+              key={emne.id}
+              onClick={(e) => handleEmneSelection(e, emne)}
+              className="block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            >
               {emne.navn}
             </button>
           ))}
 
         {oppgavetype.steg[state] === "Velg temaer" && (
-          <div>
+          <div className="space-y-2">
             {muligeTemaer.length > 0 &&
               muligeTemaer.map((tema) => (
-                <div key={tema.id}>
-                  <label>
+                <div key={tema.id} className="flex items-center">
+                  <label className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       checked={valgteTemaer.includes(tema.id)}
                       onChange={() => handleTemaSelection(tema.id)}
+                      className="form-checkbox"
                     />
-                    {tema.navn}
+                    <span>{tema.navn}</span>
                   </label>
                 </div>
               ))}
@@ -137,7 +247,70 @@ export default function PostOppgaveSkjema() {
             cols={20}
             value={oppgavetekst}
             onChange={(e) => setOppgavetekst(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
           />
+        )}
+
+        {oppgavetype.steg[state] === "Marker variabler" && (
+          <>
+            <input
+              type="text"
+              placeholder="Variabel-navn"
+              value={aktivtVariabelTegn}
+              onChange={(e) => setAktivtVariabelTegn(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            <textarea
+              rows={10}
+              cols={20}
+              value={oppgavetekst}
+              onSelect={handleSelection}
+              readOnly
+              className="w-full px-3 py-2 border rounded-md mt-2"
+            ></textarea>
+            <p className="mt-2">Markert område: {oppgavetekstMarkering}</p>
+            <button
+              type="button"
+              onClick={handleAddVariable}
+              className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+            >
+              Legg til variabel
+            </button>
+          </>
+        )}
+
+        {oppgavetype.steg[state] === "Definer variabler" && (
+          <ul className="space-y-2">
+            {variabler.map((variabel) => (
+              <li key={variabel.tegn}>
+                <span>{variabel.tegn}</span>
+                <select
+                  onChange={(e) => handleEndreVariabeltype(e, variabel.tegn)}
+                  className="ml-2 p-1 border rounded"
+                >
+                  <option value="">Velg en verdi</option>
+                  {variabeltyper.map((variabeltype) => (
+                    <option key={variabeltype.navn} value={variabeltype.navn}>
+                      {variabeltype.navn}
+                    </option>
+                  ))}
+                </select>
+                {variabel.type && (
+                  <>
+                    {variabeltyper.map((type) => {
+                      if (type.navn === variabel.type) {
+                        return renderInputFeltForEgenskaper(
+                          type.egenskaper,
+                          variabel.tegn
+                        );
+                      }
+                      return null;
+                    })}
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
         )}
 
         {oppgavetype.steg[state] === "Løsningsforslag" && (
@@ -147,21 +320,35 @@ export default function PostOppgaveSkjema() {
             cols={20}
             value={løsningsforslag}
             onChange={(e) => setLøsningsforslag(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
           />
         )}
 
         {oppgavetype.steg[state] === "Send inn" && (
-          <button type="submit">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600"
+          >
             <span>Legg til oppgave</span>
           </button>
         )}
       </form>
-      <button type="button" onClick={() => updateState(false)}>
-        {"<-"}
-      </button>
-      <button type="button" onClick={() => updateState(true)}>
-        {"->"}
-      </button>
+      <div className="mt-4 flex justify-between">
+        <button
+          type="button"
+          onClick={() => updateState(false)}
+          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+        >
+          {"<-"}
+        </button>
+        <button
+          type="button"
+          onClick={() => updateState(true)}
+          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+        >
+          {"->"}
+        </button>
+      </div>
     </div>
   );
 }
