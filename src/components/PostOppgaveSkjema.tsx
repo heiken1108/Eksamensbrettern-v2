@@ -1,6 +1,7 @@
 "use client";
+import { Størrelsesenheter } from "@/data/enheter";
 import { oppgavetyper } from "@/data/oppgavetyper";
-import { Emne, OppgaveType, Variabel } from "@/data/types";
+import { Emne, OppgaveType, Størrelsesenhet, Variabel } from "@/data/types";
 import { variabeltyper } from "@/data/variabeltyper";
 import { useEffect, useState } from "react";
 
@@ -26,8 +27,14 @@ export default function PostOppgaveSkjema() {
   const [oppgavetekstMarkering, setOppgavetekstMarkering] = useState("");
   const [aktivtVariabelTegn, setAktivtVariabelTegn] = useState("");
   const [variabler, setVariabler] = useState<Variabel[]>([]);
+  const [løsningssteg, setLøsningssteg] = useState<string[]>([]); //Mulig å ha funksjoner?
+  const [aktivtLøsningssteg, setAktivtLøsningssteg] = useState("");
 
   const [løsningsforslag, setLøsningsforslag] = useState("");
+
+  const [størrelsesEnhet, setStørrelsesEnhet] = useState<Størrelsesenhet>(
+    Størrelsesenheter[0]
+  );
 
   const submitForm = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +76,19 @@ export default function PostOppgaveSkjema() {
         tittel: tittel,
         oppgavetekst: oppgavetekst,
         løsningsforslag: løsningsforslag,
+      };
+    }
+    if (oppgavetype.navn === "Regneoppgave") {
+      return {
+        type: oppgavetype.navn,
+        tittel: tittel,
+        emne: valgtEmne,
+        temaer: valgteTemaer,
+        oppgavetekst: oppgavetekst,
+        variabler: variabler,
+        løsningssteg: løsningssteg,
+        løsningsforslag: løsningsforslag,
+        størrelsesenhet: størrelsesEnhet,
       };
     }
     return {};
@@ -178,6 +198,24 @@ export default function PostOppgaveSkjema() {
     }
   };
 
+  const handleAddLøsningsSteg = () => {
+    if (aktivtLøsningssteg === "") {
+      return;
+    }
+    const nyLøsningsstegListe = [...løsningssteg, aktivtLøsningssteg];
+    setLøsningssteg(nyLøsningsstegListe);
+    setAktivtLøsningssteg("");
+  };
+
+  const handleRemoveLøsningSteg = (index: number) => () => {
+    setLøsningssteg((prevSteg) => prevSteg.filter((_, i) => i !== index));
+  };
+
+  const handleEnhetSelection = (enhet: Størrelsesenhet) => {
+    setStørrelsesEnhet(enhet);
+    updateState(true);
+  };
+
   function updateState(forward: boolean) {
     setState((prevState) => (forward ? prevState + 1 : prevState - 1));
   }
@@ -185,9 +223,9 @@ export default function PostOppgaveSkjema() {
   return (
     <div id="mainFrame" className="p-4 bg-gray-100">
       <form onSubmit={submitForm} className="space-y-4">
-        <ul className="space-y-2">
-          {state === -1 &&
-            oppgavetyper.map((type) => (
+        {state === -1 && (
+          <ul className="space-y-2">
+            {oppgavetyper.map((type) => (
               <li key={type.navn}>
                 <button
                   key={type.navn}
@@ -198,7 +236,8 @@ export default function PostOppgaveSkjema() {
                 </button>
               </li>
             ))}
-        </ul>
+          </ul>
+        )}
         {oppgavetype.steg[state] === "Tittel" && (
           <input
             type="text"
@@ -313,6 +352,33 @@ export default function PostOppgaveSkjema() {
           </ul>
         )}
 
+        {oppgavetype.steg[state] === "Utregning" && (
+          <>
+            {løsningssteg.map(
+              (
+                steg,
+                index //Fiks problem med key
+              ) => (
+                <div>
+                  <span key={index}>{steg}</span>
+                  <button key={steg} onClick={handleRemoveLøsningSteg(index)}>
+                    X
+                  </button>
+                </div>
+              )
+            )}
+            <input
+              type="text"
+              placeholder="Nytt løsningssteg"
+              value={aktivtLøsningssteg}
+              onChange={(e) => setAktivtLøsningssteg(e.target.value)}
+            />
+            <button type="button" onClick={handleAddLøsningsSteg}>
+              Legg til steg
+            </button>
+          </>
+        )}
+
         {oppgavetype.steg[state] === "Løsningsforslag" && (
           <textarea
             placeholder="Løsningsforslag"
@@ -322,6 +388,22 @@ export default function PostOppgaveSkjema() {
             onChange={(e) => setLøsningsforslag(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
           />
+        )}
+
+        {oppgavetype.steg[state] === "Definer størrelsesorden" && (
+          <ul className="space-y-2">
+            {Størrelsesenheter.map((enhet) => (
+              <li key={enhet.navn}>
+                <button
+                  key={enhet.navn}
+                  onClick={() => handleEnhetSelection(enhet)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  {`${enhet.navn} (${enhet.symbol})`}
+                </button>
+              </li>
+            ))}
+          </ul>
         )}
 
         {oppgavetype.steg[state] === "Send inn" && (

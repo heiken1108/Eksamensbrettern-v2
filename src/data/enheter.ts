@@ -1,4 +1,11 @@
-export const enheter = [
+import { Størrelsesenhet } from "./types";
+
+export const Størrelsesenheter: Størrelsesenhet[] = [
+  {
+    navn: "ingen",
+    symbol: "",
+    faktor: 1,
+  },
   {
     navn: "piko",
     symbol: "p",

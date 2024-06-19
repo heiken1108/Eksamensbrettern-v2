@@ -18,3 +18,9 @@ export type OppgaveType = {
   navn: string;
   steg: string[];
 };
+
+export type Størrelsesenhet = {
+  navn: string;
+  symbol: string;
+  faktor: number;
+};
