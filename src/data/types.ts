@@ -6,12 +6,12 @@ export type Emne = {
 
 export type Variabel = {
   tegn: string;
-  type?: string;
-  min?: number;
-  max?: number;
-  steg?: number;
-  desimaler?: number;
-  verdier?: number[];
+  type?: string; //Skal egentlig ikke være optional
+  Min?: number; //Fiks at disse egentlig skal være små bokstaver
+  Maks?: number;
+  Steg?: number;
+  Desimaler?: number;
+  Verdier?: number[];
 };
 
 export type OppgaveType = {
@@ -24,3 +24,20 @@ export type Størrelsesenhet = {
   symbol: string;
   faktor: number;
 };
+
+export interface Oppgave {
+  id?: number;
+  tittel: string;
+  type: string;
+  oppgavetekst: string;
+  løsningsforslag: string;
+  emneid: number;
+  aktiv: boolean;
+}
+
+export interface Regneoppgave extends Oppgave {
+  variabler: Variabel[];
+  løsningssteg: string[];
+  aktiv: boolean;
+  størrelsesorden: string;
+}

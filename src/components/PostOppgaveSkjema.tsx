@@ -319,41 +319,57 @@ export default function PostOppgaveSkjema() {
         )}
 
         {oppgavetype.steg[state] === "Definer variabler" && (
-          <ul className="space-y-2">
-            {variabler.map((variabel) => (
-              <li key={variabel.tegn}>
-                <span>{variabel.tegn}</span>
-                <select
-                  onChange={(e) => handleEndreVariabeltype(e, variabel.tegn)}
-                  className="ml-2 p-1 border rounded"
-                >
-                  <option value="">Velg en verdi</option>
-                  {variabeltyper.map((variabeltype) => (
-                    <option key={variabeltype.navn} value={variabeltype.navn}>
-                      {variabeltype.navn}
-                    </option>
-                  ))}
-                </select>
-                {variabel.type && (
-                  <>
-                    {variabeltyper.map((type) => {
-                      if (type.navn === variabel.type) {
-                        return renderInputFeltForEgenskaper(
-                          type.egenskaper,
-                          variabel.tegn
-                        );
-                      }
-                      return null;
-                    })}
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
+          <>
+            <textarea
+              rows={10}
+              cols={20}
+              value={oppgavetekst}
+              readOnly
+              className="w-full px-3 py-2 border rounded-md mt-2"
+            ></textarea>
+            <ul className="space-y-2">
+              {variabler.map((variabel) => (
+                <li key={variabel.tegn}>
+                  <span>{variabel.tegn}</span>
+                  <select
+                    onChange={(e) => handleEndreVariabeltype(e, variabel.tegn)}
+                    className="ml-2 p-1 border rounded"
+                  >
+                    <option value="">Velg en verdi</option>
+                    {variabeltyper.map((variabeltype) => (
+                      <option key={variabeltype.navn} value={variabeltype.navn}>
+                        {variabeltype.navn}
+                      </option>
+                    ))}
+                  </select>
+                  {variabel.type && (
+                    <>
+                      {variabeltyper.map((type) => {
+                        if (type.navn === variabel.type) {
+                          return renderInputFeltForEgenskaper(
+                            type.egenskaper,
+                            variabel.tegn
+                          );
+                        }
+                        return null;
+                      })}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
         )}
 
         {oppgavetype.steg[state] === "Utregning" && (
           <>
+            <textarea
+              rows={10}
+              cols={20}
+              value={oppgavetekst}
+              readOnly
+              className="w-full px-3 py-2 border rounded-md mt-2"
+            ></textarea>
             {løsningssteg.map(
               (
                 steg,

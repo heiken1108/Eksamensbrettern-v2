@@ -1,4 +1,6 @@
-export const oppgavetyper = [
+import { OppgaveType } from "./types";
+
+export const oppgavetyper: OppgaveType[] = [
   {
     navn: "Regneoppgave",
     steg: [
