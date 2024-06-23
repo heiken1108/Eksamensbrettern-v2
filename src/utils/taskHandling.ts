@@ -1,4 +1,4 @@
-import { Størrelsesenhet, Variabel } from "@/data/types";
+import { Variabel } from "@/data/types";
 
 var Algebrite = require("algebrite");
 
@@ -31,7 +31,6 @@ function UtførLøsningssteg(
   const tempVariabler = variabler;
   løsningssteg.forEach((steg, index) => {
     const likning = ByttUtVariabler(steg, tempVariabler);
-    console.log(index, likning);
     const resultat = fractionToNumber(Algebrite.run(likning)).toString();
     tempVariabler.set(`S${index}`, resultat.toString());
     if (index === løsningssteg.length - 1) {
@@ -42,7 +41,6 @@ function UtførLøsningssteg(
 }
 
 function fractionToNumber(fraction: string): string {
-  console.log(fraction);
   const parts = fraction.split("/");
   if (parts.length !== 2) {
     return fraction;
@@ -85,7 +83,6 @@ function BestemVariabler(variabler: Variabel[]): Map<string, string> {
 }
 
 function BestemVariabelVerdi(variabel: Variabel): number {
-  console.log(variabel);
   if (variabel.type === "Heltall") {
     if (variabel.Min === undefined || variabel.Maks === undefined) {
       throw new Error("En eller flere variabler mangler Min eller maks-verdi");

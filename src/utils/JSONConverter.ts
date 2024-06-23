@@ -5,13 +5,24 @@ export function convertRegneoppgaveFromJSON(json: any): Regneoppgave {
     tittel: json.tittel,
     oppgavetekst: json.oppgavetekst,
     variabler: json.variabler as Variabel[],
-    løsningssteg: json.losningssteg,
-    løsningsforslag: json.losningsforslag,
+    løsningssteg: json.løsningssteg,
+    løsningsforslag: json.løsningsforslag,
     type: json.type,
     emneid: json.emneid,
     aktiv: json.aktiv,
     størrelsesorden: json.størrelsesorden,
   };
-  console.log(regneoppgave);
   return regneoppgave;
+}
+
+export function convertTekstoppgaveFromJSON(json: any) {
+  const tekstoppgave = {
+    tittel: json.tittel,
+    oppgavetekst: json.oppgavetekst,
+    løsningsforslag: json.løsningsforslag,
+    type: json.type,
+    emneid: json.emneid,
+    aktiv: json.aktiv,
+  };
+  return tekstoppgave;
 }
