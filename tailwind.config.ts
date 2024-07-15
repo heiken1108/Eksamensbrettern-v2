@@ -13,6 +13,10 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        "exam-hub-primary": "#1A202C",
+        "exam-hub-secondary": "#DEDBA7",
+      },
     },
   },
   plugins: [],
