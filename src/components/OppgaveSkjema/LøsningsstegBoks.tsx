@@ -37,7 +37,7 @@ const LøsningstegBoks: React.FC<LøsningstegBoksProps> = ({
         className="w-full px-3 py-2 border rounded-md mt-2 resize-none flex-grow min-h-0"
       />
       {løsningssteg.map((løsningssteg, index) => (
-        <div className="flex flex-row">
+        <div key={index} className="flex flex-row">
           <span>
             Steg {index}: {løsningssteg}
           </span>

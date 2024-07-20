@@ -48,8 +48,8 @@ const DefinerVariablerBoks: React.FC<DefinerVariablerBoksProps> = ({
       <h1>Definer variabler</h1>
       <textarea className="resize-none" value={oppgavetekst} readOnly />
       <div className="my-4">
-        {variabler.map((variabel) => (
-          <div className="w-full flex flex-row gap-2">
+        {variabler.map((variabel, index) => (
+          <div key={index} className="w-full flex flex-row gap-2">
             <span className="py-2">{variabel.tegn}: </span>
             <select
               onChange={(e) => handleEndreVariabeltype(e, variabel.tegn)}

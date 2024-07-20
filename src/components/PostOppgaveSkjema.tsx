@@ -1,3 +1,4 @@
+//TBD
 "use client";
 import { Størrelsesenheter } from "@/data/enheter";
 import { oppgavetyper } from "@/data/oppgavetyper";
@@ -375,7 +376,7 @@ export default function PostOppgaveSkjema() {
                 steg,
                 index //Fiks problem med key
               ) => (
-                <div>
+                <div key={index}>
                   <span key={index}>{steg}</span>
                   <button key={steg} onClick={handleRemoveLøsningSteg(index)}>
                     X

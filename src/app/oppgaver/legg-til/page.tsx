@@ -1,7 +1,7 @@
 "use client";
 import StateNavigator from "@/components/OppgaveSkjema/StateNavigator";
 import { Emne, OppgaveType, Størrelsesenhet, Variabel } from "@/data/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OppgaveTypeValgBoks from "@/components/OppgaveSkjema/OppgaveTypeValgBoks";
 import ShortTextInput from "@/components/OppgaveSkjema/ShortTextInput";
 import EmnevalgBoks from "@/components/OppgaveSkjema/EmnevalgBoks";
@@ -32,6 +32,26 @@ export default function LeggTilOppgave() {
     // TODO: Implement borders for state values [-1, ->]
     setState((prevState) => (forward ? prevState + 1 : prevState - 1));
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleChangeState(true);
+      }
+      if (event.key === "ArrowRight") {
+        handleChangeState(true);
+      }
+      if (event.key === "ArrowLeft") {
+        handleChangeState(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const constructOppgaveObjekt = () => {
     return {
@@ -179,6 +199,7 @@ export default function LeggTilOppgave() {
             </button>
           )}
         </div>
+
         <StateNavigator onChangeState={handleChangeState} />
       </div>
     </div>
