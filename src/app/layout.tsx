@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +22,10 @@ export default function RootLayout({
       <body
         className={`${inter.className} flex flex-col min-h-screen bg-exam-hub-secondary`}
       >
-        <Navbar />
-        <main className="flex-grow flex">{children}</main>
+        <Providers>
+          <Navbar />
+          <main className="flex-grow flex">{children}</main>
+        </Providers>
       </body>
     </html>
   );

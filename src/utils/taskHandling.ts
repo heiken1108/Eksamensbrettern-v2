@@ -23,10 +23,11 @@ export function SetUpRegneoppgave({
   return { revidertOppgavetekst, svar };
 }
 
-function UtførLøsningssteg(
+export function UtførLøsningssteg(
   løsningssteg: string[],
   variabler: Map<string, string>
 ): string {
+  console.log("løsningssteg", løsningssteg, "variabler", variabler);
   let svar = "";
   const tempVariabler = variabler;
   løsningssteg.forEach((steg, index) => {

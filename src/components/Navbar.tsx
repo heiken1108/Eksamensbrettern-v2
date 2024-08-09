@@ -8,7 +8,7 @@ export default function Navbar() {
           <Link href="/">Hjem</Link>
         </div>
         <div className="flex space-x-4">
-          <Link href="/legg-til-oppgave">Legg til oppgave</Link>
+          <Link href="/oppgaver/legg-til">Legg til oppgave</Link>
         </div>
       </div>
     </nav>
