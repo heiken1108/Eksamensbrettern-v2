@@ -23,6 +23,9 @@ export default function LeggTilOppgave() {
   const [emne, setEmne] = useState<Emne>();
   const [temaer, setTemaer] = useState<number[]>([]);
   const [oppgaveTekst, setOppgaveTekst] = useState<string>("");
+  const [variablerOriginalverdier, setVariablerOriginalverdier] = useState<
+    Map<string, string>
+  >(new Map());
   const [variabler, setVariabler] = useState<Variabel[]>([]);
   const [løsningssteg, setLøsningssteg] = useState<string[]>([]);
   const [løsningsforslag, setLøsningsforslag] = useState<string>("");
@@ -143,9 +146,14 @@ export default function LeggTilOppgave() {
             <MarkerVariablerBoks
               oppgaveTekst={oppgaveTekst}
               initialVariabler={variabler}
-              onAction={(nyeVariabler, revidertOppgaveteskt) => {
+              onAction={(
+                nyeVariabler,
+                revidertOppgaveteskt,
+                variabelMapping
+              ) => {
                 setOppgaveTekst(revidertOppgaveteskt);
                 setVariabler(nyeVariabler);
+                setVariablerOriginalverdier(variabelMapping);
               }}
             />
           )}
@@ -164,6 +172,7 @@ export default function LeggTilOppgave() {
             <LøsningstegBoks
               løsningssteg={løsningssteg}
               oppgaveTekst={oppgaveTekst}
+              eksempelVariabler={variablerOriginalverdier}
               onChangeLøsningssteg={(nyeLøsningssteg: string[]) =>
                 setLøsningssteg(nyeLøsningssteg)
               }

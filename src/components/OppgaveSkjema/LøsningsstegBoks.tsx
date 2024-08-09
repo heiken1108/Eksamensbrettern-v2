@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { UtførLøsningssteg } from "@/utils/taskHandling";
+import { useEffect, useState } from "react";
 
 interface LøsningstegBoksProps {
   løsningssteg: string[];
   oppgaveTekst: string;
+  eksempelVariabler: Map<string, string>;
   onChangeLøsningssteg: (nyeLøsningssteg: string[]) => void;
 }
 
 const LøsningstegBoks: React.FC<LøsningstegBoksProps> = ({
   løsningssteg,
   oppgaveTekst,
+  eksempelVariabler,
   onChangeLøsningssteg,
 }) => {
   const [aktivtLøsningssteg, setAktivtLøsningssteg] = useState<string>("");
+  const [utregning, setUtregning] = useState<string>("");
 
   const handleAddLøsningsSteg = () => {
     if (aktivtLøsningssteg === "") {
@@ -26,11 +30,28 @@ const LøsningstegBoks: React.FC<LøsningstegBoksProps> = ({
     const nyLøsningsstegListe = løsningssteg.filter((_, i) => i !== index);
     onChangeLøsningssteg(nyLøsningsstegListe);
   };
+
+  useEffect(() => {
+    try {
+      const svar = UtførLøsningssteg(løsningssteg, eksempelVariabler);
+      setUtregning(svar);
+    } catch (error) {
+      setUtregning("Utregning ikke gjennomført");
+    }
+  }, [løsningssteg]);
+
   return (
     <div className="flex flex-col w-full h-full p-4 gap-2">
       <h1 className="font-semibold">Løsningssteg</h1>
       <p>Eksempelvariabler: </p>
-      <p>Foreløpig utregning:</p>
+      {Array.from(eksempelVariabler).map(([key, value]) => (
+        <div key={key} className="flex flex-row">
+          <span>
+            {key}: {value}
+          </span>
+        </div>
+      ))}
+      <p>Foreløpig utregning: {utregning}</p>
       <textarea
         value={oppgaveTekst}
         readOnly

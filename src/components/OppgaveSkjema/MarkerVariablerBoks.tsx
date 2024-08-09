@@ -4,7 +4,11 @@ import { useState } from "react";
 interface MarkerVariablerBoksProps {
   oppgaveTekst: string;
   initialVariabler: Variabel[];
-  onAction: (variabler: Variabel[], nyOppgavetekst: string) => void;
+  onAction: (
+    variabler: Variabel[],
+    nyOppgavetekst: string,
+    variabelMapping: Map<string, string>
+  ) => void;
 }
 
 const MarkerVariablerBoks: React.FC<MarkerVariablerBoksProps> = ({
@@ -21,6 +25,9 @@ const MarkerVariablerBoks: React.FC<MarkerVariablerBoksProps> = ({
   const [oppgavetekstMarkering, setOppgavetekstMarkering] = useState("");
   const [aktivtVariabelTegn, setAktivtVariabelTegn] = useState("");
   const [variabler, setVariabler] = useState<Variabel[]>(initialVariabler);
+  const [variabelMapping, setVariabelMapping] = useState<Map<string, string>>(
+    new Map()
+  );
 
   const handleSelection = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const textarea = e.target as HTMLTextAreaElement;
@@ -33,6 +40,12 @@ const MarkerVariablerBoks: React.FC<MarkerVariablerBoksProps> = ({
   };
 
   const handleAddVariable = () => {
+    console.log(
+      "oppgavetekstmarkering",
+      oppgavetekstMarkering,
+      "aktivtVariabelTegn",
+      aktivtVariabelTegn
+    );
     if (
       aktivtVariabelTegn === "" ||
       oppgavetekstMarkering === "" ||
@@ -45,8 +58,11 @@ const MarkerVariablerBoks: React.FC<MarkerVariablerBoksProps> = ({
       tegn: aktivtVariabelTegn,
     };
     let nyeVariabler: Variabel[] = [];
+    let variabelMappingOppdatert: Map<string, string> = variabelMapping;
+
     if (!variabler.some((variabel) => variabel.tegn === aktivtVariabelTegn)) {
       nyeVariabler = [...variabler, variabel];
+      variabelMappingOppdatert.set(aktivtVariabelTegn, oppgavetekstMarkering);
     } else {
       nyeVariabler = variabler;
     }
@@ -54,8 +70,9 @@ const MarkerVariablerBoks: React.FC<MarkerVariablerBoksProps> = ({
 
     setVariabler(nyeVariabler);
     setRedivertOppgaveTekst(revidertTekst);
-    console.log(nyeVariabler, revidertTekst);
-    onAction(nyeVariabler, revidertTekst);
+    setVariabelMapping(variabelMappingOppdatert);
+    console.log(nyeVariabler, revidertTekst, variabelMappingOppdatert);
+    onAction(nyeVariabler, revidertTekst, variabelMappingOppdatert);
   };
 
   const behandleOppgavetekst = () => {
