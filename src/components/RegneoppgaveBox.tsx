@@ -34,7 +34,7 @@ export default function RegneoppgaveBox({
   };
 
   return (
-    <div>
+    <>
       <h1>{oppgavetekst}</h1>
       <input
         type="text"
@@ -43,6 +43,6 @@ export default function RegneoppgaveBox({
         onChange={(e) => setSvar(e.target.value)}
       />
       <button onClick={handleCheckAnswer}>Sjekk svar</button>
-    </div>
+    </>
   );
 }
