@@ -11,5 +11,9 @@ export function evaluateUserInput(
   }
   const lowerbound = correctAnswerNumber * (1 - ROOM_FOR_ERROR);
   const upperbound = correctAnswerNumber * (1 + ROOM_FOR_ERROR);
-  return inputNumber >= lowerbound && inputNumber <= upperbound;
+  if (inputNumber < 0) {
+    return inputNumber >= upperbound && inputNumber <= lowerbound;
+  } else {
+    return inputNumber >= lowerbound && inputNumber <= upperbound;
+  }
 }
