@@ -19,21 +19,8 @@ Videre krever det kompetanse innen fagene det lages eksamensoppgaver for.
 
 NextJS, Typescript, Postgres, Tailwind, Vercel
 
-### Hvordan kjøre prosjektet
+### Hvordan kjøre prosjektet lokalt
 
 1. Klon prosjektet
 2. Kjør `npm install`
 3. Kjør `npm run dev`
-4. Kjøh
-
-### Plan for utvikling
-
-1. Lage form for innsending av oppgaver
-2. Lage side for enkeltoppgaver, der ny oppgave lages
-3. Lage oversikt over enkeltoppgaver, med sortering og filtrering
-4. Lage eksamensgenerator
-5. Implementere brukerinnlogging med Google
-6. Implementere søkefunksjonalitet
-7. Implementere logging av brukeraktivitet (riktig, feil på en oppgave osv.)
-8. Lage anbefalingssystem
-9. Lage datavarehus over brukerdata
