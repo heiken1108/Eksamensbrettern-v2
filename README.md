@@ -1,6 +1,6 @@
 ## Oppgave-prosjekt
 
-Dette er en applikasjon som er laget for å generere varianter av eksamensoppgaver i ulike emner ved NTNU. Et eksempel er en regneoppgave innen fysikk, der den selv vil generere egne variabler og regne ut rett svar.
+Dette er en applikasjon som er laget for å generere varianter av eksamensoppgaver i ulike emner ved NTNU. Et eksempel er en regneoppgave innen fysikk, der den selv vil generere egne variabler og regne ut rett svar. Fortsatt i svært tidlig stadie av utvikling.
 
 ### NTNU-emner i praksis
 
